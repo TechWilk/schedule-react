@@ -1,25 +1,12 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import EventComponent from './components/eventComponent';
 
 function App() {
+
+  const eventId = 'kD6Y7cDXBm1HB8KdHfDClNiLl5IaTfzERGHbf0Ddqyv1RcjW765QmGgZY0VEFIXEv24EFZR0fbGgGen6FASVbPckfYGdGXtLLgQkS2xUKQGeNR8K8RbAxdhHXm0GAcfe';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <EventComponent eventId={eventId} />
   );
 }
 
