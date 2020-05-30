@@ -7,6 +7,7 @@ type EventData = {
 
 const EventComponent: FunctionComponent<{ eventId: string }> = ({ eventId }) => {
 
+  //const a = use
     const initial: EventData = {
         id: '',
         name: '',
