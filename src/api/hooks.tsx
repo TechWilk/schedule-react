@@ -1,7 +1,7 @@
 import JsonApiContext from "../JsonApiContext";
 import { useContext } from "react";
 
-const state: any[] = [];
+const state: any = {};
 
 interface jsonApiQuery {
   resource: string;
@@ -22,6 +22,16 @@ function useApiPreloadQuery(query: jsonApiQuery) {
   }
 
   return state[0]();
+}
+
+function useApiPreloadQueryPromise<T>(key: string, query: () => Promise<T>) {
+  const apiContext = useContext(JsonApiContext);
+
+  if (state[key] === undefined) {
+    state[key] = wrapPromise(query());
+  }
+
+  return state[key]();
 }
 
 function startFakeApiCall(message: string): Promise<string> {
@@ -59,4 +69,4 @@ function wrapPromise<T>(promise: Promise<T>): () => T {
   };
 }
 
-export { useApiPreloadQuery };
+export { useApiPreloadQuery, useApiPreloadQueryPromise };

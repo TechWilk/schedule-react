@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import EventComponent from './components/eventComponent';
 import JsonApiContext from './JsonApiContext';
+import EventSuspenseComponent from './components/eventSuspenseComponent';
 
 function App() {
 
@@ -10,7 +11,9 @@ function App() {
     <JsonApiContext.Provider value={{
       baseUri: "https://localhost:8080/api",
     }}>
-      <EventComponent eventId={eventId} />
+      <Suspense fallback={<EventSuspenseComponent />}>
+        <EventComponent eventId={eventId} />
+      </Suspense>
     </JsonApiContext.Provider>
   );
 }

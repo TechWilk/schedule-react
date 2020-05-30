@@ -1,4 +1,6 @@
 import React, { useState, useEffect, FunctionComponent } from 'react'
+import SectionComponent from './sectionComponent'
+import { useApiPreloadQuery, useApiPreloadQueryPromise } from './../api/hooks'
 
 type EventData = {
     id: string
@@ -8,33 +10,37 @@ type EventData = {
 const EventComponent: FunctionComponent<{ eventId: string }> = ({ eventId }) => {
 
   //const a = use
-    const initial: EventData = {
-        id: '',
-        name: '',
-    };
+  const initial: EventData = {
+      id: '',
+      name: '',
+  };
 
-    const [event, setEvent] = useState(initial);
+  const [event, setEvent] = useState(initial);
 
-    useEffect(() => {
-        fetch('http://localhost:8000/api/events/'+eventId)
-            .then(res => res.json())
-            .then((data) => {
-                setEvent({ id: data.id, name: data.attributes.name })
-            })
-            .catch(console.log)
-    }, [eventId])
+  // var thing = useApiPreloadQuery({
+  //   fields: [],
+  //   resource: '',
+  // })
 
-    return (
-        <div>
-        <h1>Event</h1>
-        <div className="card" >
-            <div className="card-body" >
-                <h5 className="card-title">{event.id}</h5>
-            <h5 className="card-title">{event.name}</h5>
-                </div>
-            </div>
-        </div>
-    )
+  var thing = useApiPreloadQueryPromise('event'+eventId, () => fetch('http://localhost:8000/api/events/' + eventId))
+  var data = thing.json()
+  console.log(data)
+  setEvent({ id: data.id, name: data.attributes.name })
+
+  return (
+      <div>
+          <h1>Event</h1>
+          <div className="card">
+              <div className="card-body">
+                  <h5 className="card-title">{event.id}</h5>
+                  <h5 className="card-title">{event.name}</h5>
+              </div>
+          </div>
+          <div className="card">
+              {/* <SectionComponent /> */}
+          </div>
+      </div>
+  )
 }
 
 export default EventComponent
