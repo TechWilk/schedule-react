@@ -11,8 +11,7 @@ interface jsonApiQuery {
 //function fetchApiQuery(query: jsonApiQuery): Promise<any> {
 //}
 
-function preloadApiQuery(query: jsonApiQuery) {
-}
+function preloadApiQuery(query: jsonApiQuery) {}
 
 function useApiPreloadQuery(query: jsonApiQuery) {
   const apiContext = useContext(JsonApiContext);
@@ -24,14 +23,15 @@ function useApiPreloadQuery(query: jsonApiQuery) {
   return state[0]();
 }
 
-function useApiPreloadQueryPromise<T>(key: string, query: () => Promise<T>) {
+function useApiPreloadQueryPromise(key: string, query: () => Promise<Response>) {
   const apiContext = useContext(JsonApiContext);
+  console.log(key, state.key, state.key !== undefined ? state.key() : "NA");
 
-  if (state[key] === undefined) {
-    state[key] = wrapPromise(query());
+  if (state.key === undefined) {
+    state.key = wrapJsonPromise(query());
   }
 
-  return state[key]();
+  return state.key();
 }
 
 function startFakeApiCall(message: string): Promise<string> {
@@ -42,6 +42,40 @@ function startFakeApiCall(message: string): Promise<string> {
   });
 }
 
+function wrapJsonPromise(promise: Promise<Response>): () => Object {
+  let status = "pending";
+  let result: Object;
+  let errorResult = "";
+
+  let suspender = promise.then(
+    (r) => {
+      r.json().then(
+        (data) => {
+          status = "success";
+          result = data;
+        },
+        (e) => {
+          status = "error";
+          errorResult = e;
+        }
+      );
+    },
+    (e) => {
+      status = "error";
+      errorResult = e;
+    }
+  );
+
+  return () => {
+    if (status === "pending") {
+      throw suspender;
+    } else if (status === "error") {
+      throw errorResult;
+    }
+
+    return result;
+  };
+}
 function wrapPromise<T>(promise: Promise<T>): () => T {
   let status = "pending";
   let result: T;
