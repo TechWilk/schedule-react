@@ -27,11 +27,10 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
   );
 
   var localStorage = window.localStorage;
-  var jsonString = localStorage.getItem("recentlyVisitedEvents") ?? '';
+  var jsonString = localStorage.getItem("recentlyVisitedEvents") ?? '{}';
   var recentlyVisitedEvents = JSON.parse(jsonString);
   recentlyVisitedEvents[eventId] = eventId;
   localStorage.setItem("recentlyVisitedEvents", JSON.stringify(recentlyVisitedEvents));
-
 
   return (
     <div>

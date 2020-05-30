@@ -3,16 +3,15 @@ import Event from "./event";
 import {
   Switch,
   Route,
-  Link,
   useRouteMatch,
+  Link,
 } from "react-router-dom";
-import EventComponent from "./components/eventComponent";
 
 const Events = () => {
   let match = useRouteMatch();
 
-  var jsonString = localStorage.getItem("recentlyVisitedEvents") ?? "";
-  var recentlyVisitedEvents = JSON.parse(jsonString);
+  var jsonString = localStorage.getItem("recentlyVisitedEvents") ?? "{}";
+  var recentlyVisitedEvents: string[] = Object.values(JSON.parse(jsonString));
  
   return (
     <div>
@@ -27,9 +26,13 @@ const Events = () => {
             Please select an event you recently visited on this device, or click
             on a direct link.
           </h3>
-          {/* {recentlyVisitedEvents.map((eventId: string) => (
-            <Link to={match.path + eventId} />
-          ))} */}
+          <ul>
+          {recentlyVisitedEvents.map((eventId) => (
+            <li key={eventId}>
+              <Link to={match.path + "/" + eventId}>{eventId}</Link>
+            </li>
+          ))}
+          </ul>
         </Route>
       </Switch>
     </div>
