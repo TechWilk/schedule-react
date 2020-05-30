@@ -2,10 +2,19 @@ import React, { useState, useEffect, FunctionComponent } from "react";
 import SectionComponent from "./sectionComponent";
 import { useApiPreloadQuery, useApiPreloadQueryPromise } from "./../api/hooks";
 
-type EventData = {
-  id: string;
-  name: string;
-};
+import createStyles from "../styles";
+
+const [styles, resolver] = createStyles({
+  card: {
+    width: '10em',
+    background: 'red',
+  },
+  cardBody: {
+  },
+  cardTitle: {
+    fontSize: '2em',
+  },
+});
 
 const EventComponent: FunctionComponent<{ eventId: string }> = ({
   eventId,
@@ -27,9 +36,9 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
   return (
     <div>
       <h1>Event: {name}</h1>
-      <div className="card">
-        <div className="card-body">
-          <h5 className="card-title">{name}</h5>
+      <div className={resolver(styles.card)}>
+        <div className={resolver(styles.cardBody)}>
+          <h5 className={resolver(styles.cardTitle)}>{name}</h5>
         </div>
       </div>
       <div className="card">{/* <SectionComponent /> */}</div>
