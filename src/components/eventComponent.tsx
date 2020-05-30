@@ -17,12 +17,18 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
     fetch("http://localhost:8000/api/events/" + eventId)
   );
 
+  var localStorage = window.localStorage;
+  var jsonString = localStorage.getItem("recentlyVisitedEvents") ?? '';
+  var recentlyVisitedEvents = JSON.parse(jsonString);
+  recentlyVisitedEvents[eventId] = eventId;
+  localStorage.setItem("recentlyVisitedEvents", JSON.stringify(recentlyVisitedEvents));
+
+
   return (
     <div>
-      <h1>Event</h1>
+      <h1>Event: {name}</h1>
       <div className="card">
         <div className="card-body">
-          <h5 className="card-title">{id}</h5>
           <h5 className="card-title">{name}</h5>
         </div>
       </div>
