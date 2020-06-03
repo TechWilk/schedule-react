@@ -1,10 +1,15 @@
-import React, { useState, useEffect, FunctionComponent } from "react";
+import React, { FunctionComponent, Suspense } from "react";
 import SectionComponent from "./sectionComponent";
-import { useApiPreloadQuery, useApiPreloadQueryPromise } from "./../api/hooks";
-
+import SectionSuspenseComponent from "./sectionSuspenseComponent";
+import { useApiPreloadQueryPromise } from "./../api/hooks";
 import createStyles from "../styles";
 
-const [styles, resolver] = createStyles({
+type JsonApiRelationship = {
+    id: string
+    type: string
+}
+
+const styles = createStyles({
   card: {
     width: '10em',
     background: 'red',
@@ -19,13 +24,18 @@ const [styles, resolver] = createStyles({
 const EventComponent: FunctionComponent<{ eventId: string }> = ({
   eventId,
 }) => {
+
   const {
     id,
     attributes: { name },
+    relationships: { sections },
   } = useApiPreloadQueryPromise("event" + eventId, () =>
     fetch("http://localhost:8000/api/events/" + eventId)
   );
+  
+  var sectionIds = sections.data.map((value: JsonApiRelationship) => value.id);
 
+  // add event to recently visited
   var localStorage = window.localStorage;
   var jsonString = localStorage.getItem("recentlyVisitedEvents") ?? '{}';
   var recentlyVisitedEvents = JSON.parse(jsonString);
@@ -39,9 +49,18 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
         <div className={styles("cardBody")}>
           <h5 className={styles("cardTitle")}>{name}</h5>
         </div>
-        </div>
       </div>
-      <div className="card">{/* <SectionComponent /> */}</div>
+      <div className="card">
+        {sectionIds.map((sectionId: number) => (
+          <Suspense fallback={<SectionSuspenseComponent />}>
+            <SectionComponent
+              key={sectionId}
+              eventId={eventId}
+              sectionId={sectionId}
+            />
+          </Suspense>
+        ))}
+      </div>
     </div>
   );
 };

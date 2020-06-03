@@ -1,39 +1,56 @@
-import React, { useState, useEffect, FunctionComponent } from 'react'
+import React, { FunctionComponent, Suspense } from 'react'
+import { useApiPreloadQueryPromise } from "../api/hooks";
+import SegmentComponent from './segmentComponent';
+import SegmentSuspenseComponent from './segmentSuspenseComponent';
+import createStyles from '../styles';
 
-type SectionData = {
+type JsonApiRelationship = {
     id: string
-    name: string
+    type: string
 }
 
-const SectionComponent: FunctionComponent<{ eventId: string, sectionId: string }> = ({ eventId, sectionId }) => {
+const styles = createStyles({
+  card: {
+    border: "1px solid green",
+  },
+  cardBody: {},
+  cardTitle: {
+    color: "blue",
+  },
+});
 
-    const initial: SectionData = {
-        id: '',
-        name: '',
-    };
+const SectionComponent: FunctionComponent<{ eventId: string, sectionId: number }> = ({ eventId, sectionId }) => {
 
-    const [section, setSection] = useState(initial);
+  const {
+    id,
+    attributes: { name },
+    relationships: { segments },
+  } = useApiPreloadQueryPromise("section" + sectionId, () =>
+    fetch("http://localhost:8000/api/events/" + eventId + "/sections/" + sectionId)
+  );
+  
+  var segmentIds = segments.data.map((value: JsonApiRelationship) => value.id);
 
-    useEffect(() => {
-        fetch('http://localhost:8000/api/sections/' + sectionId)
-            .then(res => res.json())
-            .then((data) => {
-                setSection({ id: data.id, name: data.attributes.name })
-            })
-            .catch(console.log)
-    }, [sectionId])
-
-    return (
-        <div>
-            <h1>Section</h1>
-            <div className="card" >
-                <div className="card-body" >
-                    <h5 className="card-title">{section.id}</h5>
-                    <h5 className="card-title">{section.name}</h5>
-                </div>
-            </div>
+  return (
+    <div>
+      <div className={styles('card')}>
+        <h2>Section</h2>
+        <div className="card-body">
+          <h5 className="card-title">{name}</h5>
         </div>
-    )
+        {segmentIds.map((segmentId: number) => (
+          <Suspense fallback={<SegmentSuspenseComponent />}>
+            <SegmentComponent
+              key={segmentId}
+              eventId={eventId}
+              sectionId={sectionId}
+              segmentId={segmentId}
+            />
+          </Suspense>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default SectionComponent

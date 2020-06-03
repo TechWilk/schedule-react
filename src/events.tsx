@@ -1,11 +1,13 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Event from "./event";
+import EventLinkComponent from "./components/eventLinkComponent"
 import {
   Switch,
   Route,
   useRouteMatch,
   Link,
 } from "react-router-dom";
+import EventLinkSuspenseComponent from "./components/eventLinkSuspenseComponent";
 
 const Events = () => {
   let match = useRouteMatch();
@@ -27,11 +29,13 @@ const Events = () => {
             on a direct link.
           </h3>
           <ul>
-          {recentlyVisitedEvents.map((eventId) => (
-            <li key={eventId}>
-              <Link to={match.path + "/" + eventId}>{eventId}</Link>
-            </li>
-          ))}
+            <Suspense fallback={<EventLinkSuspenseComponent />}>
+              {recentlyVisitedEvents.map((eventId) => (
+                <li key={eventId}>
+                  <EventLinkComponent eventId={eventId} />
+                </li>
+              ))}
+            </Suspense>
           </ul>
         </Route>
       </Switch>
