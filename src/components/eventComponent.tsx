@@ -35,9 +35,10 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
   return (
     <div>
       <h1>Event: {name}</h1>
-      <div className={resolver(styles.card)}>
-        <div className={resolver(styles.cardBody)}>
-          <h5 className={resolver(styles.cardTitle)}>{name}</h5>
+      <div className={styles("card")}>
+        <div className={styles("cardBody")}>
+          <h5 className={styles("cardTitle")}>{name}</h5>
+        </div>
         </div>
       </div>
       <div className="card">{/* <SectionComponent /> */}</div>
