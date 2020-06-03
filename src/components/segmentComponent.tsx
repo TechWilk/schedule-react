@@ -9,7 +9,9 @@ type JsonApiRelationship = {
 
 const styles = createStyles({
   card: {
-    background: "#bbb",
+    border: "2px solid #bbb",
+    margin: "5px 0",
+    padding: "5px",
   },
   cardBody: {},
   cardTitle: {
@@ -39,10 +41,7 @@ const SegmentComponent: FunctionComponent<{
   return (
     <div>
       <div className={styles('card')}>
-        <h3>Segment</h3>
-        <div className="card-body">
-          <h5 className={styles('cardTitle')}>{name}</h5>
-        </div>
+        <h5 className={styles('cardTitle')}>{name}</h5>
       </div>
     </div>
   );

@@ -11,8 +11,6 @@ type JsonApiRelationship = {
 
 const styles = createStyles({
   card: {
-    width: '10em',
-    background: 'red',
   },
   cardBody: {
   },
@@ -44,20 +42,15 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
 
   return (
     <div>
-      <h1>Event: {name}</h1>
-      <div className={styles("card")}>
-        <div className={styles("cardBody")}>
-          <h5 className={styles("cardTitle")}>{name}</h5>
-        </div>
+      <h1>{name}</h1>
+      <div>
+        <div>Remaining:</div>
+        <div>Time:</div>
       </div>
-      <div className="card">
+      <div className={styles("card")}>
         {sectionIds.map((sectionId: number) => (
-          <Suspense fallback={<SectionSuspenseComponent />}>
-            <SectionComponent
-              key={sectionId}
-              eventId={eventId}
-              sectionId={sectionId}
-            />
+          <Suspense key={sectionId} fallback={<SectionSuspenseComponent />}>
+            <SectionComponent eventId={eventId} sectionId={sectionId} />
           </Suspense>
         ))}
       </div>
