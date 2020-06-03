@@ -25,13 +25,12 @@ function useApiPreloadQuery(query: jsonApiQuery) {
 
 function useApiPreloadQueryPromise(key: string, query: () => Promise<Response>) {
   const apiContext = useContext(JsonApiContext);
-  console.log(key, state.key, state.key !== undefined ? state.key() : "NA");
 
-  if (state.key === undefined) {
-    state.key = wrapJsonPromise(query());
+  if (state[key] === undefined) {
+    state[key] = wrapJsonPromise(query());
   }
 
-  return state.key();
+  return state[key]();
 }
 
 function startFakeApiCall(message: string): Promise<string> {
