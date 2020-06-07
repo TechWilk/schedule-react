@@ -45,8 +45,10 @@ const SectionComponent: FunctionComponent<{
     childId: number,
     childDuration: number
   ) => {
-    duration[childId] = childDuration;
-    setDuration(duration);
+    setDuration({
+      ...duration,
+      [childId]: childDuration,
+    });
   };
 
   const totalDuration = (duration: { [key: number]: number }) => {
