@@ -3,11 +3,13 @@ import createStyles from "../styles";
 
 const styles = createStyles({
   card: {
-    background: "#bbb",
+    border: "2px solid #bbb",
+    margin: "5px 0",
+    padding: "5px",
   },
   cardBody: {},
   cardTitle: {
-    color: "blue",
+    // color: "blue",
   },
 });
 
@@ -15,11 +17,8 @@ const styles = createStyles({
 const SegmentSuspenseComponent = () => {
   return (
     <div>
-      <div className={styles('card')}>
-        <h3>Segment</h3>
-        <div className="card-body">
-          <h5 className="card-title">_______</h5>
-        </div>
+      <div className={styles("card")}>
+        <h5 className={styles("cardTitle")}>________</h5>
       </div>
     </div>
   );

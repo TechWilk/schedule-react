@@ -15,7 +15,7 @@ const styles = createStyles({
   },
   cardBody: {},
   cardTitle: {
-    color: "blue",
+    // color: "blue",
   },
 });
 

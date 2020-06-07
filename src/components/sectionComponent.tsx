@@ -15,7 +15,7 @@ const styles = createStyles({
   },
   cardBody: {},
   cardTitle: {
-    color: "blue",
+    // color: "blue",
   },
 });
 
@@ -34,9 +34,8 @@ const SectionComponent: FunctionComponent<{ eventId: string, sectionId: number }
   return (
     <div>
       <div className={styles("card")}>
-        <h2>{name}</h2>
-        {!segmentIds}
-        {segmentIds.map((segmentId: number) => (
+        {segmentIds.length ? (
+          segmentIds.map((segmentId: number) => (
           <Suspense key={segmentId} fallback={<SegmentSuspenseComponent />}>
             <SegmentComponent
               eventId={eventId}
@@ -44,7 +43,10 @@ const SectionComponent: FunctionComponent<{ eventId: string, sectionId: number }
               segmentId={segmentId}
             />
           </Suspense>
-        ))}
+          ))
+        ) : (
+          <p>No segments</p>
+        )}
       </div>
     </div>
   );

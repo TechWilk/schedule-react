@@ -3,11 +3,11 @@ import createStyles from "../styles";
 
 const styles = createStyles({
   card: {
-    border: "1px solid green",
+    marginTop: "35px",
   },
   cardBody: {},
   cardTitle: {
-    color: "blue",
+    // color: "blue",
   },
 });
 
@@ -15,7 +15,7 @@ const SectionSuspenseComponent = () => {
   return (
     <div>
       <div className={styles("card")}>
-        <h2>_______</h2>
+        <h2>________</h2>
       </div>
     </div>
   );
