@@ -63,9 +63,9 @@ const SectionComponent: FunctionComponent<{
       <div className={styles("card")}>
         <h2>
           {name}(
-          {/* <Moment unix duration={1}>
-            {Object.values(duration).reduce((total: number, individual: number) => total + individual), 0)}
-          </Moment> */}
+          <Moment unix duration={1}>
+            {totalDuration(duration)}
+          </Moment>
           )
         </h2>
         <p>{totalDuration(duration)}</p>
