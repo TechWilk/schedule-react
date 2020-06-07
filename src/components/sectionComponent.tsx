@@ -71,7 +71,7 @@ const SectionComponent: FunctionComponent<{
         startTime: durationSum,
         endTime: durationSum += durations[value.id],
       };
-    })(0)
+    })(startTime)
   );
 
   return (
