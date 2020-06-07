@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Suspense } from "react";
+import React, { FunctionComponent, Suspense, useState } from "react";
 import SectionComponent from "./sectionComponent";
 import SectionSuspenseComponent from "./sectionSuspenseComponent";
 import { useApiPreloadQueryPromise } from "./../api/hooks";
@@ -40,6 +40,17 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
   recentlyVisitedEvents[eventId] = eventId;
   localStorage.setItem("recentlyVisitedEvents", JSON.stringify(recentlyVisitedEvents));
 
+  // event duration
+  const initial: number = 0;
+  const [duration, setDuration] = useState(initial);
+
+  const updateDuration = (
+    previousSegmentDuration: number,
+    segmentDuration: number
+  ) => {
+    setDuration(duration - previousSegmentDuration + segmentDuration);
+  };
+  
   return (
     <div>
       <h1>{name}</h1>
@@ -50,7 +61,7 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
       <div className={styles("card")}>
         {sectionIds.map((sectionId: number) => (
           <Suspense key={sectionId} fallback={<SectionSuspenseComponent />}>
-            <SectionComponent eventId={eventId} sectionId={sectionId} />
+            <SectionComponent eventId={eventId} sectionId={sectionId} updateEventDuration={updateDuration}/>
           </Suspense>
         ))}
       </div>

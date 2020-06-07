@@ -1,6 +1,7 @@
-import React, { FunctionComponent, Suspense } from 'react'
+import React, { FunctionComponent, Suspense, useEffect, useRef } from 'react'
 import { useApiPreloadQueryPromise } from "../api/hooks";
 import createStyles from "../styles";
+import Moment from 'react-moment'
 
 type JsonApiRelationship = {
     id: string
@@ -23,10 +24,11 @@ const SegmentComponent: FunctionComponent<{
   eventId: string;
   sectionId: number;
   segmentId: number;
-}> = ({ eventId, sectionId, segmentId }) => {
+  updateSectionDuration: any;
+}> = ({ eventId, sectionId, segmentId, updateSectionDuration }) => {
   const {
     id,
-    attributes: { name },
+    attributes: { name, duration, durationIsEstimated },
   } = useApiPreloadQueryPromise("segment" + segmentId, () =>
     fetch(
       "http://localhost:8000/api/events/" +
@@ -36,12 +38,28 @@ const SegmentComponent: FunctionComponent<{
         "/segments/" +
         segmentId
     )
-  );
+    );
+  
+  useEffect(() => {
+    updateSectionDuration(segmentId, duration);
+
+  }, [duration]);
+
+  const previousDurationRef = useRef();
+  useEffect(() => {
+    previousDurationRef.current = duration;
+  })
+  const previousDuration = previousDurationRef.current ?? 0;
 
   return (
     <div>
-      <div className={styles('card')}>
-        <h5 className={styles('cardTitle')}>{name}</h5>
+      <div className={styles("card")}>
+        <h5 className={styles("cardTitle")}>{name}</h5>
+        <p>{duration}</p>
+        <Moment unix duration={1}>
+          {duration}
+        </Moment>
+        <p>{durationIsEstimated ? "blue" : "red"}</p>
       </div>
     </div>
   );
