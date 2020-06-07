@@ -3,6 +3,7 @@ import SectionComponent from "./sectionComponent";
 import SectionSuspenseComponent from "./sectionSuspenseComponent";
 import { useApiPreloadQueryPromise } from "./../api/hooks";
 import createStyles from "../styles";
+import Moment from "react-moment";
 
 type JsonApiRelationship = {
     id: string
@@ -41,27 +42,44 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
   localStorage.setItem("recentlyVisitedEvents", JSON.stringify(recentlyVisitedEvents));
 
   // event duration
-  const initial: number = 0;
+  const initial: { [key: number]: number } = {};
   const [duration, setDuration] = useState(initial);
 
-  const updateDuration = (
-    previousSegmentDuration: number,
-    segmentDuration: number
-  ) => {
-    setDuration(duration - previousSegmentDuration + segmentDuration);
+  const updateDuration = (childId: number, childDuration: number) => {
+    setDuration({
+      ...duration,
+      [childId]: childDuration,
+    });
+  };
+
+  const totalDuration = (duration: { [key: number]: number }) => {
+    return Object.values(duration).reduce(
+      (total: number, individual: number) => total + individual,
+      0
+    );
   };
   
   return (
     <div>
       <h1>{name}</h1>
       <div>
-        <div>Remaining:</div>
+        <div>
+          Remaining: {totalDuration(duration)} (
+          <Moment unix duration={1}>
+            {totalDuration(duration)}
+          </Moment>
+          )
+        </div>
         <div>Time:</div>
       </div>
       <div className={styles("card")}>
         {sectionIds.map((sectionId: number) => (
           <Suspense key={sectionId} fallback={<SectionSuspenseComponent />}>
-            <SectionComponent eventId={eventId} sectionId={sectionId} updateEventDuration={updateDuration}/>
+            <SectionComponent
+              eventId={eventId}
+              sectionId={sectionId}
+              updateEventDuration={updateDuration}
+            />
           </Suspense>
         ))}
       </div>

@@ -58,6 +58,11 @@ const SectionComponent: FunctionComponent<{
     );
   };
 
+  // event duration
+  useEffect(() => {
+    updateEventDuration(sectionId, totalDuration(duration));
+  }, [duration]);
+
   return (
     <div>
       <div className={styles("card")}>
