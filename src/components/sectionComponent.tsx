@@ -6,7 +6,7 @@ import createStyles from '../styles';
 import Moment from 'react-moment';
 
 type JsonApiRelationship = {
-    id: string
+    id: number
     type: string
 }
 
@@ -23,8 +23,9 @@ const styles = createStyles({
 const SectionComponent: FunctionComponent<{
   eventId: string;
   sectionId: number;
+  startTime: number;
   updateEventDuration: any;
-}> = ({ eventId, sectionId, updateEventDuration }) => {
+}> = ({ eventId, sectionId, updateEventDuration, startTime }) => {
   const {
     id,
     attributes: { name },
@@ -35,33 +36,43 @@ const SectionComponent: FunctionComponent<{
     )
   );
 
-  var segmentIds = segments.data.map((value: JsonApiRelationship) => value.id);
 
   // section duration
   const initial: {[key: number]: number} = {}
-  const [duration, setDuration] = useState(initial);
+  const [durations, setDuration] = useState(initial);
 
   const updateDuration = (
     childId: number,
     childDuration: number
   ) => {
     setDuration({
-      ...duration,
+      ...durations,
       [childId]: childDuration,
     });
   };
 
-  const totalDuration = (duration: { [key: number]: number }) => {
-    return Object.values(duration).reduce(
+  const totalDuration = (durations: { [key: number]: number }) => {
+    return Object.values(durations).reduce(
       (total: number, individual: number) => total + individual,
       0
     );
   };
 
-  // event duration
+  // event durations
   useEffect(() => {
-    updateEventDuration(sectionId, totalDuration(duration));
-  }, [duration]);
+    updateEventDuration(sectionId, totalDuration(durations));
+  }, [durations]);
+
+  // segments
+  var segmentIds: { id: number; startTime: number }[] = segments.data.map(
+    ((durationSum: number) => (value: JsonApiRelationship) => {
+      return {
+        id: value.id,
+        startTime: durationSum,
+        endTime: durationSum += durations[value.id],
+      };
+    })(0)
+  );
 
   return (
     <div>
@@ -69,18 +80,20 @@ const SectionComponent: FunctionComponent<{
         <h2>
           {name}(
           <Moment unix duration={1}>
-            {totalDuration(duration)}
+            {totalDuration(durations)}
           </Moment>
           )
         </h2>
-        <p>{totalDuration(duration)}</p>
+        <p>{totalDuration(durations)}</p>
+        <p>Start Time: {startTime}</p>
         {segmentIds.length ? (
-          segmentIds.map((segmentId: number) => (
-            <Suspense key={segmentId} fallback={<SegmentSuspenseComponent />}>
+          segmentIds.map(({ id, startTime }) => (
+            <Suspense key={id} fallback={<SegmentSuspenseComponent />}>
               <SegmentComponent
                 eventId={eventId}
                 sectionId={sectionId}
-                segmentId={segmentId}
+                segmentId={id}
+                startTime={startTime}
                 updateSectionDuration={updateDuration}
               />
             </Suspense>

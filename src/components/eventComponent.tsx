@@ -6,7 +6,7 @@ import createStyles from "../styles";
 import Moment from "react-moment";
 
 type JsonApiRelationship = {
-    id: string
+    id: number
     type: string
 }
 
@@ -26,13 +26,15 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
 
   const {
     id,
-    attributes: { name },
+    attributes: { name, startTime },
     relationships: { sections },
+  }: {
+    id: string;
+    attributes: { name: string; startTime: string };
+      relationships: { sections: any };
   } = useApiPreloadQueryPromise("event" + eventId, () =>
     fetch("http://localhost:8000/api/events/" + eventId)
   );
-  
-  var sectionIds = sections.data.map((value: JsonApiRelationship) => value.id);
 
   // add event to recently visited
   var localStorage = window.localStorage;
@@ -43,11 +45,11 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
 
   // event duration
   const initial: { [key: number]: number } = {};
-  const [duration, setDuration] = useState(initial);
+  const [durations, setDurations] = useState(initial);
 
   const updateDuration = (childId: number, childDuration: number) => {
-    setDuration({
-      ...duration,
+    setDurations({
+      ...durations,
       [childId]: childDuration,
     });
   };
@@ -58,26 +60,43 @@ const EventComponent: FunctionComponent<{ eventId: string }> = ({
       0
     );
   };
-  
+
+  // sections
+  var sectionIds: {id: number, startTime: number}[] = sections.data.map(
+     ((durationSum: number) => (value: JsonApiRelationship) => {
+       return {
+         id: value.id,
+         startTime: durationSum,
+         endTime: durationSum += durations[value.id],
+       };
+     })(0)
+   );
+
   return (
     <div>
       <h1>{name}</h1>
       <div>
         <div>
-          Remaining: {totalDuration(duration)} (
+          Remaining: {totalDuration(durations)} (
           <Moment unix duration={1}>
-            {totalDuration(duration)}
+            {totalDuration(durations)}
           </Moment>
           )
         </div>
-        <div>Time:</div>
+        <div>
+          Time:
+          <Moment format="DD/MM/YYYY HH:mm:ss">
+            {startTime}
+          </Moment>
+        </div>
       </div>
       <div className={styles("card")}>
-        {sectionIds.map((sectionId: number) => (
-          <Suspense key={sectionId} fallback={<SectionSuspenseComponent />}>
+        {sectionIds.map(({ id, startTime }) => (
+          <Suspense key={id} fallback={<SectionSuspenseComponent />}>
             <SectionComponent
               eventId={eventId}
-              sectionId={sectionId}
+              sectionId={id}
+              startTime={startTime}
               updateEventDuration={updateDuration}
             />
           </Suspense>

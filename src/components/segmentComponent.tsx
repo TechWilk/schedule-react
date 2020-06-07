@@ -24,8 +24,9 @@ const SegmentComponent: FunctionComponent<{
   eventId: string;
   sectionId: number;
   segmentId: number;
+  startTime: number;
   updateSectionDuration: any;
-}> = ({ eventId, sectionId, segmentId, updateSectionDuration }) => {
+}> = ({ eventId, sectionId, segmentId, startTime, updateSectionDuration }) => {
   const {
     id,
     attributes: { name, duration, durationIsEstimated },
@@ -38,8 +39,8 @@ const SegmentComponent: FunctionComponent<{
         "/segments/" +
         segmentId
     )
-    );
-  
+  );
+
   useEffect(() => {
     updateSectionDuration(segmentId, duration);
 
@@ -59,6 +60,7 @@ const SegmentComponent: FunctionComponent<{
         <Moment unix duration={1}>
           {duration}
         </Moment>
+        <p>Start time: {startTime}</p>
         <p>{durationIsEstimated ? "blue" : "red"}</p>
       </div>
     </div>
